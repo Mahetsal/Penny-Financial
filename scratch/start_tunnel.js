@@ -1,5 +1,6 @@
 const { spawn, exec } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 console.log('===================================================');
 console.log('   PENNY (KARAM FINANCIAL) SERVER & TUNNEL BOOTER  ');
@@ -8,7 +9,7 @@ console.log('===================================================');
 // 1. Start the dev servers (backend + client) concurrently
 console.log('\n[1/3] Booting Vite client and Express server...');
 const devProcess = spawn('npm.cmd', ['run', 'dev'], {
-  cwd: path.join(__dirname, '..'), // parent folder since we are in scratch/
+  cwd: path.join(__dirname, '..'),
   stdio: 'inherit',
   shell: true
 });
@@ -19,9 +20,28 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-// 2. Start Cloudflare Tunnel
+// 2. Search for the cloudflared binary in the current directory (handling typos/double extensions)
+let cloudflaredCmd = 'cloudflared'; // Default fallback (system path)
+
+const possibleNames = [
+  'cloudflared.exe',
+  'cloudflared.exe.exe',
+  'cloudflared-windows-amd64.exe',
+  'cloudflared'
+];
+
+for (const name of possibleNames) {
+  const fullPath = path.join(__dirname, '..', name);
+  if (fs.existsSync(fullPath)) {
+    cloudflaredCmd = fullPath;
+    console.log(`[System] Found local cloudflared binary: ${name}`);
+    break;
+  }
+}
+
+// 3. Start Cloudflare Tunnel
 console.log('[2/3] Launching Cloudflare Quick Tunnel...');
-const tunnelProcess = spawn('cloudflared', ['tunnel', '--url', 'http://127.0.0.1:5173'], {
+const tunnelProcess = spawn(`"${cloudflaredCmd}"`, ['tunnel', '--url', 'http://127.0.0.1:5173'], {
   cwd: path.join(__dirname, '..'),
   shell: true
 });
@@ -58,11 +78,13 @@ function handleTunnelData(data) {
 }
 
 tunnelProcess.on('close', (code) => {
-  console.log(`Cloudflare tunnel process exited with code ${code}`);
+  if (code !== 0 && !urlFound) {
+    console.log(`\nCloudflare tunnel process exited with code ${code}`);
+    console.log('If you get this error, please check that you have copied cloudflared.exe to the project folder.');
+  }
 });
 
 tunnelProcess.on('error', (err) => {
   console.error('\n❌ ERROR starting cloudflared:', err.message);
-  console.log('Please ensure cloudflared is installed and available in your PATH.');
-  console.log('Download link: https://github.com/cloudflare/cloudflared/releases');
+  console.log('Please ensure cloudflared is installed and available in your PATH or project folder.');
 });
