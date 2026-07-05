@@ -1,4 +1,4 @@
-const { spawn, exec } = require('child_process');
+const { spawn, exec, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -6,10 +6,31 @@ console.log('===================================================');
 console.log('   PENNY (KARAM FINANCIAL) SERVER & TUNNEL BOOTER  ');
 console.log('===================================================');
 
-// 1. Start the dev servers (backend + client) concurrently
+const projectRoot = path.join(__dirname, '..');
+
+// 1. If cloudflared.zip exists but no exe, extract it automatically
+const localZip = path.join(projectRoot, 'cloudflared.zip');
+const localExe = path.join(projectRoot, 'cloudflared.exe');
+
+if (!fs.existsSync(localExe) && fs.existsSync(localZip)) {
+  console.log('[System] Found cloudflared.zip. Extracting locally...');
+  try {
+    if (process.platform === 'win32') {
+      execSync(`tar -xf "${localZip}" -C "${projectRoot}"`);
+    } else {
+      execSync(`unzip "${localZip}" -d "${projectRoot}"`);
+    }
+    console.log('✅ Extraction complete!');
+  } catch (e) {
+    console.error('Failed to extract cloudflared.zip automatically:', e.message);
+    console.log('Please extract cloudflared.zip manually in the project root folder.');
+  }
+}
+
+// 2. Start the dev servers (backend + client) concurrently
 console.log('\n[1/3] Booting Vite client and Express server...');
 const devProcess = spawn('npm.cmd', ['run', 'dev'], {
-  cwd: path.join(__dirname, '..'),
+  cwd: projectRoot,
   stdio: 'inherit',
   shell: true
 });
@@ -20,7 +41,7 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-// 2. Search for the cloudflared binary in the current directory (handling typos/double extensions)
+// 3. Search for the cloudflared binary in the current directory (handling typos/double extensions)
 let cloudflaredCmd = 'cloudflared'; // Default fallback (system path)
 
 const possibleNames = [
@@ -31,18 +52,18 @@ const possibleNames = [
 ];
 
 for (const name of possibleNames) {
-  const fullPath = path.join(__dirname, '..', name);
+  const fullPath = path.join(projectRoot, name);
   if (fs.existsSync(fullPath)) {
     cloudflaredCmd = fullPath;
-    console.log(`[System] Found local cloudflared binary: ${name}`);
+    console.log(`[System] Using local cloudflared binary: ${name}`);
     break;
   }
 }
 
-// 3. Start Cloudflare Tunnel
+// 4. Start Cloudflare Tunnel
 console.log('[2/3] Launching Cloudflare Quick Tunnel...');
 const tunnelProcess = spawn(`"${cloudflaredCmd}"`, ['tunnel', '--url', 'http://127.0.0.1:5173'], {
-  cwd: path.join(__dirname, '..'),
+  cwd: projectRoot,
   shell: true
 });
 
