@@ -1,5 +1,5 @@
 @echo off
-title Penny Server & Cloudflare Tunnel Booter
+title "Penny Server & Cloudflare Tunnel Booter"
 echo ===================================================
 echo     Penny Offline-First Financial Application
 echo ===================================================
