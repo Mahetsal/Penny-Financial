@@ -155,6 +155,34 @@ async function initDatabase() {
     )
   `);
 
+  await run(`
+    CREATE TABLE IF NOT EXISTS financial_qa (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      category TEXT NOT NULL,
+      lang TEXT NOT NULL,
+      keywords TEXT NOT NULL
+    )
+  `);
+
+  await run(`
+    CREATE VIRTUAL TABLE IF NOT EXISTS financial_qa_fts USING fts5(question, answer, category, lang, keywords)
+  `);
+
+  try {
+    const ftsCount = await get('SELECT COUNT(*) as count FROM financial_qa_fts');
+    const qaCount = await get('SELECT COUNT(*) as count FROM financial_qa');
+    if (ftsCount.count < qaCount.count) {
+      console.log('Syncing financial_qa to FTS5 virtual table...');
+      await run('DELETE FROM financial_qa_fts');
+      await run('INSERT INTO financial_qa_fts SELECT question, answer, category, lang, keywords FROM financial_qa');
+      console.log('Sync complete!');
+    }
+  } catch (e) {
+    console.error('Failed to sync FTS5 virtual table:', e.message);
+  }
+
   // Migration for profile avatar column
   try {
     await run("ALTER TABLE profile ADD COLUMN avatar TEXT DEFAULT 'avatar1'");
