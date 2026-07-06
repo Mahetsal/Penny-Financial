@@ -6,6 +6,28 @@ import { apiFetch } from '../utils/api';
 // convertArabicNumerals and normalizeArabic are imported from '../utils/nluEngine'
 
 
+const getArCat = (cat) => {
+  const map = {
+    'Food & Dining': 'المطاعم والأغذية',
+    'Transportation': 'المواصلات والنقل',
+    'Entertainment': 'الترفيه',
+    'Housing': 'السكن والعقارات',
+    'Utilities': 'الفواتير والخدمات',
+    'Shopping': 'التسوق والتجزئة',
+    'Miscellaneous': 'عامة'
+  };
+  return map[cat] || cat;
+};
+
+const STOCK_COMPLIANCE_REGISTRY = [
+  { name: 'Aramco', symbol: '2222', nameAr: 'أرامكو', compliant: true, debt: 11.2, impure: 0.8 },
+  { name: 'Alinma', symbol: '1150', nameAr: 'الإنماء', compliant: true, debt: 0, impure: 0 },
+  { name: 'STC', symbol: '7010', nameAr: 'الاتصالات', compliant: true, debt: 18.5, impure: 1.2 },
+  { name: 'SABIC', symbol: '2010', nameAr: 'سابك', compliant: true, debt: 24.1, impure: 2.1 },
+  { name: 'SNB', symbol: '1180', nameAr: 'الأهلي', compliant: true, debt: 15.0, impure: 1.5 },
+  { name: 'AlRajhi', symbol: '1120', nameAr: 'الراجحي', compliant: true, debt: 0, impure: 0 }
+];
+
 // Safe math expression evaluator — recursive descent parser (NO eval/new Function)
 const evaluateMathExpression = (str) => {
   const converted = convertArabicNumerals(str);
@@ -228,18 +250,7 @@ const getSpendingFingerprint = (transactions, isAr) => {
   const primary = sorted[0];
   const secondary = sorted[1];
 
-  const getArCat = (cat) => {
-    const map = {
-      'Food & Dining': 'المطاعم والأغذية',
-      'Transportation': 'المواصلات والنقل',
-      'Entertainment': 'الترفيه',
-      'Housing': 'السكن والعقارات',
-      'Utilities': 'الفواتير والخدمات',
-      'Shopping': 'التسوق والتجزئة',
-      'Miscellaneous': 'عامة'
-    };
-    return map[cat] || cat;
-  };
+
 
   if (isAr) {
     let reply = `🧬 **بصمتك الاستهلاكية الفريدة (Spending Fingerprint)**:
@@ -282,12 +293,7 @@ ${secondary ? `• **Secondary Category**: "${secondary[0]}" ($${secondary[1].to
 
 // Custom Stock compliance searcher
 const checkStockQuery = (normalized, isAr) => {
-  const stocks = [
-    { name: 'aramco', symbol: '2222', nameAr: 'أرامكو', compliant: true, debt: 11.2, impure: 0.8 },
-    { name: 'alinma', symbol: '1150', nameAr: 'الإنماء', compliant: true, debt: 0, impure: 0 },
-    { name: 'stc', symbol: '7010', nameAr: 'الاتصالات', compliant: true, debt: 18.5, impure: 1.2 },
-    { name: 'sabic', symbol: '2010', nameAr: 'سابك', compliant: true, debt: 24.1, impure: 2.1 }
-  ];
+  const stocks = STOCK_COMPLIANCE_REGISTRY;
 
   const normQuery = normalizeArabic(normalized);
 
@@ -521,17 +527,7 @@ const checkContextFollowUp = (normalized, messages, transactions, stats, isAr) =
     const sortedMayCats = Object.keys(mayTopCatMap).sort((a,b) => mayTopCatMap[b] - mayTopCatMap[a]);
     const mayTopCat = sortedMayCats[0] || (isAr ? 'العامة' : 'General');
     
-    const getArCat = (cat) => {
-      switch (cat) {
-        case 'Food & Dining': return 'المطاعم والأغذية';
-        case 'Transportation': return 'المواصلات والنقل';
-        case 'Entertainment': return 'الترفيه';
-        case 'Housing': return 'السكن';
-        case 'Utilities': return 'الفواتير';
-        case 'Shopping': return 'التسوق والتجزئة';
-        default: return cat;
-      }
-    };
+
     const displayCatName = isAr ? getArCat(mayTopCat) : mayTopCat;
 
     if (isAr) {
@@ -929,19 +925,7 @@ const _buildSmartResponse = (label, isAr, stats, transactions, rotationIndex = 0
   );
   const totalSubVal = activeSubs.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
-  const getArCat = (cat) => {
-    const map = {
-      'Food & Dining': 'المطاعم والأغذية',
-      'Transportation': 'المواصلات والنقل',
-      'Entertainment': 'الترفيه',
-      'Housing': 'السكن',
-      'Utilities': 'الفواتير',
-      'Shopping': 'التسوق والتجزئة',
-      'Miscellaneous': 'عامة',
-      'Salary': 'الراتب'
-    };
-    return map[cat] || cat;
-  };
+
   const displayCatName = isAr ? getArCat(topCat) : topCat;
 
   if (isAr) {
@@ -1487,18 +1471,7 @@ const getSpendingBreakdown = (transactions, isAr) => {
     grandTotal += Math.abs(t.amount);
   });
   
-  const getArCat = (cat) => {
-    const map = {
-      'Food & Dining': 'المطاعم والأغذية',
-      'Transportation': 'المواصلات والنقل',
-      'Entertainment': 'الترفيه',
-      'Housing': 'السكن',
-      'Utilities': 'الفواتير',
-      'Shopping': 'التسوق والتجزئة',
-      'Miscellaneous': 'عامة'
-    };
-    return map[cat] || cat;
-  };
+
   
   let report = isAr 
     ? `📊 تقرير الصرف الإجمالي لهذا الشهر (${grandTotal.toLocaleString()} ريال):\n`
@@ -1705,6 +1678,36 @@ function LocalAI({ lang, stats, transactions, subscriptions = [], stocks = [], s
     riskColor: 'text-primary',
     availableWorth: isRtl ? '٢٨,٥٠٠ ريال' : '28,500 SAR'
   }));
+
+  const renderUserAvatar = (avatarVal, className = "w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold shadow-inner") => {
+    if (!avatarVal) avatarVal = 'avatar1';
+    if (avatarVal.startsWith('data:image')) {
+      return (
+        <img 
+          src={avatarVal} 
+          alt="User Avatar" 
+          className={className} 
+          style={{ objectFit: 'cover' }} 
+        />
+      );
+    }
+    const avatars = {
+      avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
+      avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
+      avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
+      avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' },
+      avatar5: { emoji: '👨', bg: 'linear-gradient(135deg, #0284c7, #0369a1)' },
+      avatar6: { emoji: '🧔', bg: 'linear-gradient(135deg, #4f46e5, #4338ca)' },
+      avatar7: { emoji: '👩', bg: 'linear-gradient(135deg, #db2777, #c2185b)' },
+      avatar8: { emoji: '🧕', bg: 'linear-gradient(135deg, #0d9488, #0f766e)' }
+    };
+    const current = avatars[avatarVal] || avatars.avatar1;
+    return (
+      <div className={className} style={{ background: current.bg, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <span>{current.emoji}</span>
+      </div>
+    );
+  };
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -2193,19 +2196,7 @@ I have saved this preference locally. The Decision Simulator will now automatica
       if (matchedCategory && (normalized.includes('how much') || normalized.includes('spending') || normalized.includes('spent') || normalized.includes('كم صرفت') || normalized.includes('صرفيات') || normalized.includes('كم صرف'))) {
         const catDebits = (transactions || []).filter(t => t.category === matchedCategory && t.amount < 0);
         const total = catDebits.reduce((sum, t) => sum + Math.abs(t.amount), 0);
-        const getArCat = (cat) => {
-          const map = {
-            'Food & Dining': 'المطاعم والأغذية',
-            'Transportation': 'المواصلات والنقل',
-            'Entertainment': 'الترفيه',
-            'Housing': 'السكن',
-            'Utilities': 'الفواتير',
-            'Shopping': 'التسوق والتجزئة',
-            'Miscellaneous': 'عامة',
-            'Salary': 'الراتب'
-          };
-          return map[cat] || cat;
-        };
+
         const catNameDisplay = queryIsAr ? getArCat(matchedCategory) : matchedCategory;
         const replyText = queryIsAr
           ? `بلغ إجمالي إنفاقك في فئة "${catNameDisplay}" هذا الشهر حوالي ${total.toLocaleString()} ريال.`
@@ -2269,6 +2260,29 @@ I have saved this preference locally. The Decision Simulator will now automatica
         setMessages(prev => [...prev, { sender: 'ai', text: chitchatReply, meta: { intent: 'chitchat' } }]);
         setStatus('idle');
         return;
+      }
+
+      // Check SQLite Knowledge Base (180,000+ cases)
+      const isMutationIntent = [
+        'add_transaction', 'delete_transaction', 'create_goal', 
+        'toggle_subscription', 'add_stock', 'delete_stock'
+      ].includes(intent);
+
+      if (!isMutationIntent) {
+        try {
+          const kbRes = await apiFetch(`/api/ai/knowledge?query=${encodeURIComponent(queryText)}&lang=${queryIsAr ? 'ar' : 'en'}`);
+          if (kbRes && kbRes.match && kbRes.result) {
+            setMessages(prev => [...prev, { 
+              sender: 'ai', 
+              text: kbRes.result.answer, 
+              meta: { intent: kbRes.result.category } 
+            }]);
+            setStatus('idle');
+            return;
+          }
+        } catch (err) {
+          console.error("Failed to query SQLite knowledge base:", err);
+        }
       }
 
       if (intent === 'out_of_scope') {
@@ -2795,12 +2809,7 @@ ${matchedStock.shariahReason || ''}`;
           // Fallback to checkStockQuery helper
           const stockResult = checkStockQuery(normalized, queryIsAr);
           if (stockResult) {
-            const staticStocks = [
-              { name: 'aramco', symbol: '2222', nameAr: 'أرامكو', compliant: true, debt: 11.2, impure: 0.8 },
-              { name: 'alinma', symbol: '1150', nameAr: 'الإنماء', compliant: true, debt: 0, impure: 0 },
-              { name: 'stc', symbol: '7010', nameAr: 'الاتصالات', compliant: true, debt: 18.5, impure: 1.2 },
-              { name: 'sabic', symbol: '2010', nameAr: 'سابك', compliant: true, debt: 24.1, impure: 2.1 }
-            ];
+            const staticStocks = STOCK_COMPLIANCE_REGISTRY;
             let matchedStatic = staticStocks.find(s => 
               normalized.includes(s.name) || 
               normalized.includes(s.symbol) || 
@@ -2965,18 +2974,7 @@ ${matchedStock.shariahReason || ''}`;
     { text: '🕋 Check stock', query: 'is aramco halal' }
   ];
 
-  const getArCat = (cat) => {
-    const map = {
-      'Food & Dining': 'المطاعم والأغذية',
-      'Transportation': 'المواصلات والنقل',
-      'Entertainment': 'الترفيه',
-      'Housing': 'السكن',
-      'Utilities': 'الفواتير',
-      'Shopping': 'التسوق والتجزئة',
-      'Miscellaneous': 'عامة'
-    };
-    return map[cat] || cat;
-  };
+
 
   const renderConfirmationCard = (m, idx) => {
     const { actionType, actionPayload, confirmed, cancelled } = m.meta;
@@ -3116,15 +3114,15 @@ ${matchedStock.shariahReason || ''}`;
         {/* Floating Chat Sheet Overlay */}
         {isFloatingOpen && (
           <div className="absolute inset-0 z-[10001] flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-            {/* Modal Sheet Container - fits mobile screens beautifully */}
+            {/* Modal Sheet Container - fits mobile screens beautifully with Glassmorphism */}
             <div 
-              className="bg-surface border border-outline-variant rounded-t-3xl rounded-b-xl w-full max-w-[420px] h-[80vh] flex flex-col overflow-hidden shadow-2xl relative"
+              className="backdrop-blur-xl bg-surface/90 border border-outline-variant/60 rounded-t-3xl rounded-b-xl w-full max-w-[420px] h-[80vh] flex flex-col overflow-hidden shadow-2xl relative"
               style={{
                 boxShadow: '0 24px 64px rgba(0, 0, 0, 0.5)'
               }}
             >
               {/* Chat Header */}
-              <div className="px-4 py-3 border-b border-outline-variant bg-surface-container flex items-center justify-between shrink-0">
+              <div className="px-4 py-3 border-b border-outline-variant/60 bg-surface-container/60 backdrop-blur-md flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                     <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
@@ -3132,7 +3130,7 @@ ${matchedStock.shariahReason || ''}`;
                   <div className="flex flex-col">
                     <h4 className="font-bold text-xs text-on-surface leading-tight">{isRtl ? 'المساعد المالي الذكي (كرم)' : 'Smart Assistant (Karam)'}</h4>
                     <span className="text-[8px] text-primary leading-none flex items-center gap-0.5 mt-0.5">
-                      <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                       {isRtl ? 'نشط الآن' : 'Active Now'}
                     </span>
                   </div>
@@ -3166,18 +3164,22 @@ ${matchedStock.shariahReason || ''}`;
                         key={idx} 
                         className={`flex flex-col max-w-[85%] ${isUser ? 'self-end items-end' : 'self-start items-start'}`}
                       >
-                        {/* Bubble Meta Header */}
-                        <div className="flex items-center gap-1 mb-0.5 text-[8px] text-on-surface-variant font-medium px-1">
-                          {!isUser && <span className="material-symbols-outlined text-[10px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>}
+                        {/* Bubble Meta Header with User Avatar */}
+                        <div className="flex items-center gap-1.5 mb-1 text-[9px] text-on-surface-variant font-semibold px-1">
+                          {!isUser && (
+                            <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                              <span className="material-symbols-outlined text-[10px]" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
+                            </div>
+                          )}
                           <span>{isUser ? (isRtl ? 'أنت' : 'You') : (isRtl ? 'كرم المساعد المالي' : 'Karam Coach')}</span>
-                          {isUser && <span className="material-symbols-outlined text-[10px] text-on-surface-variant">person</span>}
+                          {isUser && renderUserAvatar(profile?.avatar, "w-4 h-4 rounded-full border border-primary/20")}
                         </div>
 
-                        {/* Main bubble */}
+                        {/* Main bubble with premium gradient for user and clean border for bot */}
                         <div 
                           className={`px-3.5 py-2.5 rounded-2xl text-xs leading-relaxed transition-all shadow-sm ${
                             isUser 
-                              ? 'bg-primary text-white font-medium border border-primary/20 rounded-te-none rounded-ts-2xl' 
+                              ? 'bg-gradient-to-br from-primary to-[#008d7e] text-white font-medium rounded-te-none rounded-ts-2xl shadow-primary/15' 
                               : 'bg-surface text-on-surface border border-outline-variant/60 rounded-ts-none rounded-te-2xl'
                           }`}
                           style={{ textAlign: isRtl ? 'right' : 'left', whiteSpace: 'pre-line' }}
