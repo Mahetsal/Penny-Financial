@@ -531,13 +531,7 @@ function AppContent() {
             </div>
           </div>
 
-          {/* Notifications */}
-          <button 
-            className="p-2 rounded-full hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 text-on-surface-variant flex items-center"
-            title={isRtl ? 'التنبيهات' : 'Notifications'}
-          >
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
+
           
           {/* Profile */}
           <div 
