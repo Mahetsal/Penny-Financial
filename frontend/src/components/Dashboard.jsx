@@ -87,7 +87,8 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
     const totalGrowth = netChange + stockPnl;
     
     const stocksVal = stocks ? stocks.reduce((sum, s) => sum + s.quantity * s.current_price, 0) : 0;
-    const totalWealthVal = stats.balance + stocksVal;
+    const bankBalSum = linkedAccounts ? linkedAccounts.reduce((sum, acc) => sum + acc.balance, 0) : 0;
+    const totalWealthVal = stats.balance + stocksVal + bankBalSum;
     
     const prevWealth = totalWealthVal - totalGrowth;
     const growthPct = prevWealth > 0 ? parseFloat(((totalGrowth / prevWealth) * 100).toFixed(1)) : 0;
@@ -411,7 +412,8 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
         const baseBalance = stats && stats.balance !== undefined && stats.balance !== null ? stats.balance : 0;
         const hasRealWealth = txList.length > 0;
         const stocksVal = stocks.reduce((acc, s) => acc + (s.quantity * s.current_price), 0);
-        let currentWealth = baseBalance + stocksVal;
+        const bankBalSum = linkedAccounts ? linkedAccounts.reduce((sum, acc) => sum + acc.balance, 0) : 0;
+        let currentWealth = baseBalance + stocksVal + bankBalSum;
         
         const wealthHistory = [];
         let runningWealth = currentWealth;
