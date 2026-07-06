@@ -476,7 +476,7 @@ function AppContent() {
       
       <header className="flex items-center justify-between p-4 border-b border-outline-variant bg-surface">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
+          <img src="/penny_logo.jpg" alt="Penny Logo" className="w-8 h-8 rounded-xl object-cover shadow-sm border border-outline-variant/60" />
           <h1 className="font-headline-md text-headline-md font-bold text-primary">Penny</h1>
         </div>
         <div className="flex items-center gap-2.5">
