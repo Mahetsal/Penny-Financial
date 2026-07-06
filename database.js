@@ -56,6 +56,7 @@ async function initDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       currency TEXT NOT NULL CHECK(currency IN ('SAR', 'USD')),
+      avatar TEXT DEFAULT 'avatar1',
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     )
   `);
@@ -153,6 +154,13 @@ async function initDatabase() {
       last_posted_month TEXT
     )
   `);
+
+  // Migration for profile avatar column
+  try {
+    await run("ALTER TABLE profile ADD COLUMN avatar TEXT DEFAULT 'avatar1'");
+  } catch (e) {
+    // Column already exists, ignore
+  }
 
   // Seed badges if empty
   const badgeCount = await get('SELECT COUNT(*) as count FROM badges');
