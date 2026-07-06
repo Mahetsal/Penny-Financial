@@ -18,14 +18,8 @@ async function cleanSlate() {
     // Reset badges unlocked column (unlocked = 0, unlocked_at = NULL)
     await database.run('UPDATE badges SET unlocked = 0, unlocked_at = NULL');
 
-    // Clear bank_accounts but insert back default bank account templates
+    // Clear bank_accounts
     await database.run('DELETE FROM bank_accounts');
-    await database.run(`
-      INSERT INTO bank_accounts (bank_name, account_number, balance, linked_at) VALUES
-      ('Alinma Bank', 'SA10200000123456789012', 24500.00, '2026-06-01'),
-      ('SNB Bank', 'SA40100000987654321098', 8200.00, '2026-06-10'),
-      ('Al Rajhi Bank', 'SA80300000112233445566', 52430.00, '2026-05-15')
-    `);
 
     console.log('✅ Clean-slate standalone script completed successfully.');
     
