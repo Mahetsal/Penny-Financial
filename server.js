@@ -979,7 +979,7 @@ setInterval(async () => {
  */
 app.get('/api/profile', async (req, res) => {
   try {
-    const profile = await database.get('SELECT name, currency FROM profile LIMIT 1');
+    const profile = await database.get('SELECT name, currency, avatar FROM profile LIMIT 1');
     if (profile) {
       res.json({ exists: true, profile });
     } else {
@@ -991,7 +991,7 @@ app.get('/api/profile', async (req, res) => {
 });
 
 app.post('/api/profile', async (req, res) => {
-  const { name, currency } = req.body;
+  const { name, currency, avatar } = req.body;
   if (!name || !currency) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -1003,10 +1003,11 @@ app.post('/api/profile', async (req, res) => {
   }
 
   try {
+    const finalAvatar = avatar || 'avatar1';
     // Wipe any existing profile before inserting or upsert to enforce single-row constraint
     await database.run('DELETE FROM profile');
     await database.run('DELETE FROM recurring_transactions');
-    await database.run('INSERT INTO profile (name, currency) VALUES (?, ?)', [name, currency]);
+    await database.run('INSERT INTO profile (name, currency, avatar) VALUES (?, ?, ?)', [name, currency, finalAvatar]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
