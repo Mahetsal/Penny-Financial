@@ -274,7 +274,11 @@ export default function RegistrationScreen({ onRegisterComplete, lang = 'ar', on
                   avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
                   avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
                   avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
-                  avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
+                  avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' },
+                  avatar5: { emoji: '👨', bg: 'linear-gradient(135deg, #0284c7, #0369a1)' },
+                  avatar6: { emoji: '🧔', bg: 'linear-gradient(135deg, #4f46e5, #4338ca)' },
+                  avatar7: { emoji: '👩', bg: 'linear-gradient(135deg, #db2777, #c2185b)' },
+                  avatar8: { emoji: '🧕', bg: 'linear-gradient(135deg, #0d9488, #0f766e)' }
                 };
                 const curr = avatars[avatar] || avatars.avatar1;
                 return (
@@ -320,41 +324,45 @@ export default function RegistrationScreen({ onRegisterComplete, lang = 'ar', on
               </div>
             </div>
 
-            {/* Pre-built selection grid */}
-            <div style={{
-              display: 'flex', gap: '10px', padding: '6px',
-              borderRadius: '16px', background: brand.inputBg,
-              border: `1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'}`,
-              justifyContent: 'space-between'
-            }}>
-              {['avatar1', 'avatar2', 'avatar3', 'avatar4'].map((av) => {
-                const isSelected = avatar === av;
-                const avatars = {
-                  avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
-                  avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
-                  avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
-                  avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
-                };
-                const item = avatars[av];
-                return (
-                  <button
-                    key={av}
-                    type="button"
-                    onClick={() => setAvatar(av)}
-                    style={{
-                      width: '36px', height: '36px', borderRadius: '50%',
-                      background: item.bg, border: isSelected ? `2.5px solid ${brand.primary}` : 'none',
-                      cursor: 'pointer', transform: isSelected ? 'scale(1.1)' : 'scale(1)',
-                      boxShadow: isSelected ? `0 0 10px ${brand.primary}` : 'none',
-                      fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      padding: 0, transition: 'all 0.15s'
-                    }}
-                  >
-                    {item.emoji}
-                  </button>
-                );
-              })}
-            </div>
+             {/* Pre-built selection grid */}
+             <div style={{
+               display: 'flex', gap: '8px', padding: '6px',
+               borderRadius: '16px', background: brand.inputBg,
+               border: `1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'}`,
+               justifyContent: 'space-between', flexWrap: 'wrap'
+             }}>
+               {['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5', 'avatar6', 'avatar7', 'avatar8'].map((av) => {
+                 const isSelected = avatar === av;
+                 const avatars = {
+                   avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
+                   avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
+                   avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
+                   avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' },
+                   avatar5: { emoji: '👨', bg: 'linear-gradient(135deg, #0284c7, #0369a1)' },
+                   avatar6: { emoji: '🧔', bg: 'linear-gradient(135deg, #4f46e5, #4338ca)' },
+                   avatar7: { emoji: '👩', bg: 'linear-gradient(135deg, #db2777, #c2185b)' },
+                   avatar8: { emoji: '🧕', bg: 'linear-gradient(135deg, #0d9488, #0f766e)' }
+                 };
+                 const item = avatars[av];
+                 return (
+                   <button
+                     key={av}
+                     type="button"
+                     onClick={() => setAvatar(av)}
+                     style={{
+                       width: '32px', height: '32px', borderRadius: '50%',
+                       background: item.bg, border: isSelected ? `2.5px solid ${brand.primary}` : 'none',
+                       cursor: 'pointer', transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+                       boxShadow: isSelected ? `0 0 10px ${brand.primary}` : 'none',
+                       fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                       padding: 0, transition: 'all 0.15s'
+                     }}
+                   >
+                     {item.emoji}
+                   </button>
+                 );
+               })}
+             </div>
           </div>
 
           {/* Currency Selection segmented control block */}
