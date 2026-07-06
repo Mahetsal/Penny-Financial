@@ -5,6 +5,7 @@ import { apiFetch } from '../utils/api';
 export default function RegistrationScreen({ onRegisterComplete, lang = 'ar', onChangeLang }) {
   const [name, setName] = useState('');
   const [currency, setCurrency] = useState('SAR');
+  const [avatar, setAvatar] = useState('avatar1');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -24,12 +25,12 @@ export default function RegistrationScreen({ onRegisterComplete, lang = 'ar', on
       const response = await apiFetch('/api/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), currency })
+        body: JSON.stringify({ name: name.trim(), currency, avatar })
       });
 
       const data = await response.json();
       if (response.ok && data.success) {
-        onRegisterComplete({ name: name.trim(), currency });
+        onRegisterComplete({ name: name.trim(), currency, avatar });
       } else {
         setError(data.error || (isRtl ? 'حدث خطأ أثناء التسجيل' : 'Registration failed'));
       }
@@ -254,6 +255,105 @@ export default function RegistrationScreen({ onRegisterComplete, lang = 'ar', on
                 onBlur={() => setIsFocused(false)}
                 disabled={loading}
               />
+            </div>
+          </div>
+
+          {/* Profile Avatar Selection Block */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 700, color: textMuted, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {isRtl ? 'الصورة الرمزية (الرمز)' : 'Profile Avatar'}
+            </label>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+              {/* Preview */}
+              {(() => {
+                if (avatar.startsWith('data:image')) {
+                  return <img src={avatar} alt="Preview" style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: `2px solid ${brand.primary}` }} />;
+                }
+                const avatars = {
+                  avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
+                  avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
+                  avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
+                  avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
+                };
+                const curr = avatars[avatar] || avatars.avatar1;
+                return (
+                  <div style={{
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    background: curr.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '20px', border: `2px solid ${brand.primary}`
+                  }}>
+                    {curr.emoji}
+                  </div>
+                );
+              })()}
+              
+              {/* Upload triggers */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('reg-avatar-file-input').click()}
+                  style={{
+                    background: 'none', border: 'none', color: brand.primary,
+                    fontSize: '11px', fontWeight: 800, cursor: 'pointer', padding: 0,
+                    textAlign: isRtl ? 'right' : 'left', textDecoration: 'underline'
+                  }}
+                >
+                  {isRtl ? '📁 تحميل صورة من الاستوديو...' : '📁 Upload photo from gallery...'}
+                </button>
+                <input
+                  id="reg-avatar-file-input"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        setAvatar(event.target.result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Pre-built selection grid */}
+            <div style={{
+              display: 'flex', gap: '10px', padding: '6px',
+              borderRadius: '16px', background: brand.inputBg,
+              border: `1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'}`,
+              justifyContent: 'space-between'
+            }}>
+              {['avatar1', 'avatar2', 'avatar3', 'avatar4'].map((av) => {
+                const isSelected = avatar === av;
+                const avatars = {
+                  avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
+                  avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
+                  avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
+                  avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
+                };
+                const item = avatars[av];
+                return (
+                  <button
+                    key={av}
+                    type="button"
+                    onClick={() => setAvatar(av)}
+                    style={{
+                      width: '36px', height: '36px', borderRadius: '50%',
+                      background: item.bg, border: isSelected ? `2.5px solid ${brand.primary}` : 'none',
+                      cursor: 'pointer', transform: isSelected ? 'scale(1.1)' : 'scale(1)',
+                      boxShadow: isSelected ? `0 0 10px ${brand.primary}` : 'none',
+                      fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      padding: 0, transition: 'all 0.15s'
+                    }}
+                  >
+                    {item.emoji}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
