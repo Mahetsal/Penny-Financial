@@ -33,6 +33,40 @@ const safeSetLocalStorage = (key, value) => {
   }
 };
 
+const renderAvatarImg = (avatarVal, className = "w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold shadow-inner") => {
+  if (!avatarVal) avatarVal = 'avatar1';
+  if (avatarVal.startsWith('data:image')) {
+    return (
+      <img 
+        src={avatarVal} 
+        alt="Profile" 
+        className={`${className} object-cover`}
+        style={{ border: '2px solid var(--primary-container)' }}
+      />
+    );
+  }
+  const avatars = {
+    avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
+    avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
+    avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
+    avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
+  };
+  const current = avatars[avatarVal] || avatars.avatar1;
+  return (
+    <div 
+      className={className} 
+      style={{ 
+        background: current.bg, 
+        color: '#fff',
+        border: '2px solid var(--primary-container)',
+        fontSize: '15px'
+      }}
+    >
+      {current.emoji}
+    </div>
+  );
+};
+
 function AppContent() {
   const [lang, setLang] = useState(() => safeGetLocalStorage('tharaa-lang', 'ar'));
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -57,6 +91,7 @@ function AppContent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [settingsName, setSettingsName] = useState('');
   const [settingsCurrency, setSettingsCurrency] = useState('SAR');
+  const [settingsAvatar, setSettingsAvatar] = useState('avatar1');
 
   const hasFetched = useRef(false);
   const { showToast } = useToast();
@@ -81,6 +116,7 @@ function AppContent() {
     if (profile) {
       setSettingsName(profile.name || '');
       setSettingsCurrency(profile.currency || 'SAR');
+      setSettingsAvatar(profile.avatar || 'avatar1');
     }
   }, [profile]);
 
@@ -219,10 +255,10 @@ function AppContent() {
       const response = await apiFetch('/api/profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: settingsName.trim(), currency: settingsCurrency })
+        body: JSON.stringify({ name: settingsName.trim(), currency: settingsCurrency, avatar: settingsAvatar })
       });
       if (response.ok) {
-        setProfile({ name: settingsName.trim(), currency: settingsCurrency });
+        setProfile({ name: settingsName.trim(), currency: settingsCurrency, avatar: settingsAvatar });
         showToast(isRtl ? 'تم حفظ التفضيلات بنجاح' : 'Preferences saved successfully', 'success');
         setIsSettingsOpen(false);
         fetchData();
@@ -455,7 +491,7 @@ function AppContent() {
             title={isRtl ? 'إعدادات الحساب وتفضيلاتك' : 'Account settings & preferences'}
           >
             <span className="font-label-md text-label-md text-on-surface hidden md:block">{profile?.name || 'عبدالله الراجحي'}</span>
-            <span className="material-symbols-outlined text-primary text-3xl">account_circle</span>
+            {renderAvatarImg(profile?.avatar)}
           </div>
         </div>
       </header>
@@ -667,6 +703,63 @@ function AppContent() {
                   className="bg-surface-container-low border border-outline-variant rounded-xl px-3 py-2 text-xs text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
                   placeholder={isRtl ? 'أدخل اسمك هنا' : 'Enter name'}
                 />
+              </div>
+
+              {/* Profile Avatar Selection */}
+              <div className="flex flex-col gap-2" style={{ textAlign: isRtl ? 'right' : 'left' }}>
+                <label className="text-xs font-semibold text-on-surface-variant">
+                  {isRtl ? 'الصورة الرمزية (الرمز)' : 'Profile Avatar'}
+                </label>
+                
+                {/* Preview current */}
+                <div className="flex items-center gap-4 mb-1">
+                  {renderAvatarImg(settingsAvatar, "w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-md")}
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[10px] text-on-surface-variant">
+                      {isRtl ? 'اختر رمزاً جاهزاً أو صورة من جهازك' : 'Choose a pre-built avatar or upload photo'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => document.getElementById('avatar-file-input').click()}
+                      className="text-left text-xs text-primary font-bold hover:underline"
+                      style={{ textAlign: isRtl ? 'right' : 'left' }}
+                    >
+                      {isRtl ? '📁 اختيار صورة من الاستوديو...' : '📁 Choose photo from gallery...'}
+                    </button>
+                    <input
+                      id="avatar-file-input"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            setSettingsAvatar(event.target.result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Prebuilt Grid */}
+                <div className="flex gap-3 justify-between p-2 bg-surface-container-low border border-outline-variant/60 rounded-2xl">
+                  {['avatar1', 'avatar2', 'avatar3', 'avatar4'].map((av) => (
+                    <button
+                      key={av}
+                      type="button"
+                      onClick={() => setSettingsAvatar(av)}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                        settingsAvatar === av ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface scale-110' : 'opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      {renderAvatarImg(av, "w-10 h-10 rounded-full flex items-center justify-center text-lg")}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Currency */}
