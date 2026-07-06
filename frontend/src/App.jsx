@@ -49,7 +49,11 @@ const renderAvatarImg = (avatarVal, className = "w-8 h-8 rounded-full flex items
     avatar1: { emoji: '🦁', bg: 'linear-gradient(135deg, #1E3A8A, #3B82F6)' },
     avatar2: { emoji: '🦊', bg: 'linear-gradient(135deg, #7C2D12, #F97316)' },
     avatar3: { emoji: '🐼', bg: 'linear-gradient(135deg, #064E3B, #10B981)' },
-    avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' }
+    avatar4: { emoji: '🦅', bg: 'linear-gradient(135deg, #4C1D95, #8B5CF6)' },
+    avatar5: { emoji: '👨', bg: 'linear-gradient(135deg, #0284c7, #0369a1)' },
+    avatar6: { emoji: '🧔', bg: 'linear-gradient(135deg, #4f46e5, #4338ca)' },
+    avatar7: { emoji: '👩', bg: 'linear-gradient(135deg, #db2777, #c2185b)' },
+    avatar8: { emoji: '🧕', bg: 'linear-gradient(135deg, #0d9488, #0f766e)' }
   };
   const current = avatars[avatarVal] || avatars.avatar1;
   return (
@@ -475,7 +479,58 @@ function AppContent() {
           <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>account_balance_wallet</span>
           <h1 className="font-headline-md text-headline-md font-bold text-primary">Penny</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+          {/* Day/Night Theme Switch Toggle (Stitch style) */}
+          <div 
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            className="relative w-14 h-7 rounded-full cursor-pointer overflow-hidden transition-all duration-300 select-none shadow-inner border border-outline-variant/60 shrink-0"
+            style={{
+              background: theme === 'light' 
+                ? 'linear-gradient(135deg, #7dd3fc, #38bdf8)' 
+                : 'linear-gradient(135deg, #0f172a, #1e1b4b)',
+            }}
+            title={isRtl ? 'تبديل المظهر' : 'Toggle Theme'}
+          >
+            {/* Clouds (Light Mode Background Details) */}
+            {theme === 'light' && (
+              <div className="absolute inset-0 opacity-70 transition-opacity duration-300">
+                <div className="absolute top-1 left-6 w-3 h-1.5 bg-white rounded-full"></div>
+                <div className="absolute top-2 left-7 w-2 h-1 bg-white rounded-full"></div>
+                <div className="absolute top-3.5 left-4 w-4 h-1.5 bg-white rounded-full"></div>
+              </div>
+            )}
+            
+            {/* Stars (Dark Mode Background Details) */}
+            {theme !== 'light' && (
+              <div className="absolute inset-0 opacity-60 transition-opacity duration-300">
+                <div className="absolute top-1 left-2 w-0.5 h-0.5 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute top-4 left-3 w-0.5 h-0.5 bg-white rounded-full"></div>
+                <div className="absolute top-2 left-5 w-0.5 h-0.5 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute top-3 left-9 w-0.5 h-0.5 bg-white rounded-full"></div>
+              </div>
+            )}
+
+            {/* Slider Knob */}
+            <div 
+              className={`absolute top-0.5 w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all duration-300 ${
+                theme === 'light' 
+                  ? 'left-0.5 bg-[#f59e0b] text-[#fef08a]' 
+                  : 'left-[30px] bg-[#f1f5f9] text-[#cbd5e1]'
+              }`}
+              style={{
+                boxShadow: theme === 'light' 
+                  ? '0 0 10px rgba(245, 158, 11, 0.6)' 
+                  : '0 0 10px rgba(255, 255, 255, 0.4)'
+              }}
+            >
+              {theme === 'light' ? (
+                <span className="material-symbols-outlined text-xs font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>light_mode</span>
+              ) : (
+                <span className="material-symbols-outlined text-xs font-bold" style={{ fontVariationSettings: "'FILL' 1" }}>dark_mode</span>
+              )}
+            </div>
+          </div>
+
           {/* Notifications */}
           <button 
             className="p-2 rounded-full hover:bg-surface-variant/20 transition-colors active:scale-95 duration-150 text-on-surface-variant flex items-center"
@@ -746,17 +801,17 @@ function AppContent() {
                 </div>
                 
                 {/* Prebuilt Grid */}
-                <div className="flex gap-3 justify-between p-2 bg-surface-container-low border border-outline-variant/60 rounded-2xl">
-                  {['avatar1', 'avatar2', 'avatar3', 'avatar4'].map((av) => (
+                <div className="flex gap-2.5 flex-wrap justify-between p-2 bg-surface-container-low border border-outline-variant/60 rounded-2xl">
+                  {['avatar1', 'avatar2', 'avatar3', 'avatar4', 'avatar5', 'avatar6', 'avatar7', 'avatar8'].map((av) => (
                     <button
                       key={av}
                       type="button"
                       onClick={() => setSettingsAvatar(av)}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                         settingsAvatar === av ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface scale-110' : 'opacity-70 hover:opacity-100'
                       }`}
                     >
-                      {renderAvatarImg(av, "w-10 h-10 rounded-full flex items-center justify-center text-lg")}
+                      {renderAvatarImg(av, "w-9 h-9 rounded-full flex items-center justify-center text-md")}
                     </button>
                   ))}
                 </div>
