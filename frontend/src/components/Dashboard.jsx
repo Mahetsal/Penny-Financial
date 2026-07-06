@@ -53,7 +53,7 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
 
   const savingsRate = stats.income > 0 
     ? Math.max(0, Math.min(100, Math.round(((stats.income - stats.spending) / stats.income) * 100))) 
-    : 20;
+    : 0;
 
   // Calculate growth
   const calculateGrowth = () => {
@@ -363,16 +363,6 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
 
       {/* Dynamic Financial Visualizations */}
       {(() => {
-        const weeklyData = [
-          { day: isRtl ? 'الأحد' : 'Sun', amount: 45 },
-          { day: isRtl ? 'الإثنين' : 'Mon', amount: 80 },
-          { day: isRtl ? 'الثلاثاء' : 'Tue', amount: 120 },
-          { day: isRtl ? 'الأربعاء' : 'Wed', amount: 35 },
-          { day: isRtl ? 'الخميس' : 'Thu', amount: 150 },
-          { day: isRtl ? 'الجمعة' : 'Fri', amount: 200 },
-          { day: isRtl ? 'السبت' : 'Sat', amount: 95 }
-        ];
-
         // Gather real weekly data if available
         const txList = Array.isArray(transactions) ? transactions : [];
         const days = [];
@@ -386,6 +376,8 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
           const label = d.toLocaleDateString(locale, { weekday: 'short' });
           dayLabels.push({ yyyymmdd, label });
         }
+
+        const weeklyData = dayLabels.map(dl => ({ day: dl.label, amount: 0 }));
         
         const spendingMap = {};
         days.forEach(day => { spendingMap[day] = 0; });
@@ -416,7 +408,8 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
           uniqueMonths.unshift(d.toISOString().substring(0, 7));
         }
         
-        const baseBalance = stats && stats.balance ? stats.balance : 30000;
+        const baseBalance = stats && stats.balance !== undefined && stats.balance !== null ? stats.balance : 0;
+        const hasRealWealth = txList.length > 0;
         const stocksVal = stocks.reduce((acc, s) => acc + (s.quantity * s.current_price), 0);
         let currentWealth = baseBalance + stocksVal;
         
@@ -497,6 +490,17 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
               <div className="relative h-[200px] w-full flex items-center justify-center" dir="ltr">
                 {showWeeklySpending ? (
                   <svg viewBox="0 0 500 200" className="w-full h-full overflow-visible">
+                    {!hasRealWeekly && (
+                      <text
+                        x="260"
+                        y="100"
+                        textAnchor="middle"
+                        className="text-[12px] font-bold opacity-60"
+                        style={{ fill: 'var(--text-secondary)' }}
+                      >
+                        {isRtl ? 'لا توجد مصاريف مسجلة هذا الأسبوع' : 'No expenses recorded this week'}
+                      </text>
+                    )}
                     {/* Grid lines */}
                     {[0, 0.25, 0.5, 0.75, 1].map((r, idx) => (
                       <line 
@@ -600,6 +604,17 @@ function Dashboard({ stats, transactions, stocks = [], linkedAccounts = [], prof
               <div className="relative h-[200px] w-full flex items-center justify-center" dir="ltr">
                 {showWealthGrowth ? (
                   <svg viewBox="0 0 500 200" className="w-full h-full overflow-visible">
+                    {!hasRealWealth && (
+                      <text
+                        x="260"
+                        y="100"
+                        textAnchor="middle"
+                        className="text-[12px] font-bold opacity-60"
+                        style={{ fill: 'var(--text-secondary)' }}
+                      >
+                        {isRtl ? 'لا توجد بيانات نمو أصول حالية' : 'No net worth growth data yet'}
+                      </text>
+                    )}
                     <defs>
                       <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.25" />
