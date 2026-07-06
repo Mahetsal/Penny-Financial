@@ -77,19 +77,19 @@ const stemToken = (token) => {
 };
 
 const SYNONYMS_MAP = {
-  // Arabic synonyms
-  'رصيد': 'رصيد_syn', 'رصيدي': 'رصيد_syn', 'فلوس': 'رصيد_syn', 'اموال': 'رصيد_syn', 'مال': 'رصيد_syn', 'كاش': 'رصيد_syn', 'حساب': 'رصيد_syn', 'ميزانيه': 'رصيد_syn', 'ميزانيتي': 'رصيد_syn', 'محفظه': 'رصيد_syn', 'محفظتي': 'رصيد_syn', 'رصيد_syn': 'رصيد_syn',
-  'صرف': 'صرف_syn', 'شراء': 'صرف_syn', 'دفع': 'صرف_syn', 'خصم': 'صرف_syn', 'اشتريت': 'صرف_syn', 'دفعت': 'صرف_syn', 'انفاق': 'صرف_syn', 'صرفت': 'صرف_syn', 'مصروف': 'صرف_syn', 'مصاريف': 'صرف_syn', 'صرف_syn': 'صرف_syn',
-  'اضف': 'اضف_syn', 'اضافه': 'اضف_syn', 'جديد': 'اضف_syn', 'تسجيل': 'اضف_syn', 'ادخال': 'اضف_syn', 'سجل': 'اضف_syn', 'اضفت': 'اضف_syn', 'انشئ': 'اضف_syn', 'انشاء': 'اضف_syn', 'اضف_syn': 'اضف_syn',
-  'حذف': 'حذف_syn', 'مسح': 'حذف_syn', 'ازاله': 'حذف_syn', 'الغاء': 'حذف_syn', 'تراجع': 'حذف_syn', 'حذفت': 'حذف_syn', 'امسح': 'حذف_syn', 'حذف_syn': 'حذف_syn',
-  'سهم': 'سهم_syn', 'اسهم': 'سهم_syn', 'تداول': 'سهم_syn', 'بورصه': 'سهم_syn', 'ارامكو': 'سهم_syn', 'راجحي': 'سهم_syn', 'شريعه': 'سهم_syn', 'حلال': 'سهم_syn', 'سهم_syn': 'سهم_syn',
-  'هدف': 'هدف_syn', 'اهداف': 'هدف_syn', 'توفير': 'هدف_syn', 'ادخار': 'هدف_syn', 'مستقبل': 'هدف_syn', 'هدف_syn': 'هدف_syn',
-  'اشتراك': 'اشتراك_syn', 'اشتراكات': 'اشتراك_syn', 'فاتوره': 'اشتراك_syn', 'فواتير': 'اشتراك_syn', 'نادي': 'اشتراك_syn', 'جيم': 'اشتراك_syn', 'اشتراك_syn': 'اشتراك_syn',
+  // Arabic synonyms (with Gulf / Saudi dialects)
+  'رصيد': 'رصيد_syn', 'رصيدي': 'رصيد_syn', 'فلوس': 'رصيد_syn', 'فلوسي': 'رصيد_syn', 'اموال': 'رصيد_syn', 'مال': 'رصيد_syn', 'كاش': 'رصيد_syn', 'حساب': 'رصيد_syn', 'ميزانيه': 'رصيد_syn', 'ميزانيتي': 'رصيد_syn', 'محفظه': 'رصيد_syn', 'محفظتي': 'رصيد_syn', 'قروش': 'رصيد_syn', 'قروشي': 'رصيد_syn', 'دراهم': 'رصيد_syn', 'دراهمي': 'رصيد_syn', 'سيولة': 'رصيد_syn', 'سيوله': 'رصيد_syn', 'رصيد_syn': 'رصيد_syn',
+  'صرف': 'صرف_syn', 'شراء': 'صرف_syn', 'دفع': 'صرف_syn', 'خصم': 'صرف_syn', 'اشتريت': 'صرف_syn', 'دفعت': 'صرف_syn', 'انفاق': 'صرف_syn', 'صرفت': 'صرف_syn', 'مصروف': 'صرف_syn', 'مصاريف': 'صرف_syn', 'شريت': 'صرف_syn', 'قشيت': 'صرف_syn', 'طيرت': 'صرف_syn', 'قطيت': 'صرف_syn', 'خسرت': 'صرف_syn', 'صرف_syn': 'صرف_syn',
+  'اضف': 'اضف_syn', 'اضافه': 'اضف_syn', 'جديد': 'اضف_syn', 'تسجيل': 'اضف_syn', 'ادخال': 'اضف_syn', 'سجل': 'اضف_syn', 'اضفت': 'اضف_syn', 'انشئ': 'اضف_syn', 'انشاء': 'اضف_syn', 'حط': 'اضف_syn', 'حطيت': 'اضف_syn', 'قيد': 'اضف_syn', 'دخل': 'اضف_syn', 'اضف_syn': 'اضف_syn',
+  'حذف': 'حذف_syn', 'مسح': 'حذف_syn', 'ازاله': 'حذف_syn', 'الغاء': 'حذف_syn', 'تراجع': 'حذف_syn', 'حذفت': 'حذف_syn', 'امسح': 'حذف_syn', 'شيل': 'حذف_syn', 'شلت': 'حذف_syn', 'كنسل': 'حذف_syn', 'كنسلت': 'حذف_syn', 'هونت': 'حذف_syn', 'حذف_syn': 'حذف_syn',
+  'سهم': 'سهم_syn', 'اسهم': 'سهم_syn', 'تداول': 'سهم_syn', 'بورصه': 'سهم_syn', 'ارامكو': 'سهم_syn', 'راجحي': 'سهم_syn', 'شريعه': 'سهم_syn', 'حلال': 'سهم_syn', 'مساهمة': 'سهم_syn', 'مساهمه': 'سهم_syn', 'سهم_syn': 'سهم_syn',
+  'هدف': 'هدف_syn', 'اهداف': 'هدف_syn', 'توفير': 'هدف_syn', 'ادخار': 'هدف_syn', 'مستقبل': 'هدف_syn', 'تجميع': 'هدف_syn', 'اجمع': 'هدف_syn', 'أجمع': 'هدف_syn', 'حصالة': 'هدف_syn', 'حصاله': 'هدف_syn', 'هدف_syn': 'هدف_syn',
+  'اشتراك': 'اشتراك_syn', 'اشتراكات': 'اشتراك_syn', 'فاتوره': 'اشتراك_syn', 'fواتير': 'اشتراك_syn', 'نادي': 'اشتراك_syn', 'جيم': 'اشتراك_syn', 'عضوية': 'اشتراك_syn', 'عضويه': 'اشتراك_syn', 'اشتراك_syn': 'اشتراك_syn',
   'طقس': 'طقس_syn', 'جو': 'طقس_syn', 'مطر': 'طقس_syn', 'امطار': 'طقس_syn', 'حراره': 'طقس_syn', 'بروده': 'طقس_syn', 'طقس_syn': 'طقس_syn',
   'ساعه': 'ساعه_syn', 'وقت': 'ساعه_syn', 'زمن': 'ساعه_syn', 'ساعه_syn': 'ساعه_syn',
-  'شكر': 'شكر_syn', 'شكرا': 'شكر_syn', 'مشكور': 'شكر_syn', 'شكر_syn': 'شكر_syn',
+  'شكر': 'شكر_syn', 'شكرا': 'شكر_syn', 'مشكور': 'شكر_syn', 'تسلم': 'شكر_syn', 'شكر_syn': 'شكر_syn',
   'وداع': 'وداع_syn', 'باي': 'وداع_syn', 'سلام': 'وداع_syn', 'وداع_syn': 'وداع_syn',
-  'نصيحه': 'نصيحه_syn', 'راي': 'نصيحه_syn', 'ارشاد': 'نصيحه_syn', 'تخطيط': 'نصيحه_syn', 'خطه': 'نصيحه_syn', 'نصيحه_syn': 'نصيحه_syn',
+  'نصيحه': 'نصيحه_syn', 'راي': 'نصيحه_syn', 'ارشاد': 'نصيحه_syn', 'تخطيط': 'نصيحه_syn', 'خطه': 'نصيحه_syn', 'شور': 'نصيحه_syn', 'فكرة': 'نصيحه_syn', 'فكره': 'نصيحه_syn', 'نصيحه_syn': 'نصيحه_syn',
 
   // English synonyms
   'balance': 'bal_syn', 'money': 'bal_syn', 'cash': 'bal_syn', 'funds': 'bal_syn', 'wealth': 'bal_syn', 'account': 'bal_syn', 'budget': 'bal_syn', 'bal_syn': 'bal_syn',
@@ -114,7 +114,7 @@ const mapToSynonym = (token) => {
 const tokenize = (text) => {
   const lower = convertArabicNumerals(text.toLowerCase().trim());
   const normalized = normalizeArabic(lower);
-  const raw = normalized.split(/[\s,.\-?;:!'"()\[\]{}]+/).filter(t => t.length >= 2);
+  const raw = normalized.split(/[\s,،.\-?؟;؛:!'"()\[\]{}]+/).filter(t => t.length >= 2);
   const filtered = raw.filter(t => !STOP_EN.has(t) && !STOP_AR.has(t));
   return filtered.map(t => mapToSynonym(t));
 };
@@ -691,47 +691,81 @@ class TfIdfClassifier {
       'ابي', 'ابغى', 'اريد', 'حاول', 'سجل', 'سوي', 'ضيف', 'تكفى', 'ارجوك', 'سجلت', 
       'صرفت', 'دفعت', 'سحبت', 'شريت', 'عرض', 'كم', 'وريني', 'افتح', 'احسب', 'احذف', 
       'امسح', 'الغاء', 'تراجع', 'حدث', 'عدل', 'فحص', 'تاكد', 'شيك', 'توزيع', 'توفير',
-      'خطط', 'ميزانية', 'تحليل', 'تقييم', 'رؤية', 'تقرير', 'خصم'
+      'خطط', 'ميزانية', 'تحليل', 'تقييم', 'رؤية', 'تقرير', 'خصم', 'قارن', 'توقع', 'تنبا',
+      'سدد', 'احسب زكاة', 'حول', 'صدر', 'ذكرني', 'نبهني', 'قسط', 'ادارة', 'احمي', 'تنظيم'
     ];
     const arObjects = [
       'معامله', 'عمليه', 'فاتوره', 'مصروف', 'شراء', 'دفع', 'سهم', 'اسهم', 'محفظه', 'تداول', 
       'هدف', 'ادخار', 'توفير', 'رصيد', 'فلوس', 'حساب', 'ميزانيه', 'اشتراك', 'اشتراكات', 'عضويه',
-      'راتب', 'ارباح', 'نتفلكس', 'ستاربكس', 'جم', 'بطاقة', 'اموال', 'نقدية', 'سيولة', 'مدخرات'
+      'راتب', 'ارباح', 'نتفلكس', 'ستاربكس', 'جم', 'بطاقة', 'اموال', 'نقدية', 'سيولة', 'مدخرات',
+      'مقارنة', 'الشهر الماضي', 'ديون', 'دين', 'قرض', 'ضريبة', 'زكاة', 'حاسبة', 'تحويل', 'صحة',
+      'فئة', 'تصنيف', 'دوري', 'تكرار', 'تصدير', 'ثروة', 'صافي', 'طوارئ', 'احتياطي', 'تذكير', 'تنبيه'
     ];
     const arModifiers = [
       '', 'اليوم', 'امس', 'الان', 'حالا', 'فورا', 'سريعا', 'من فضلك', 'لي', 'في محفظتي',
-      'من بطاقتي', 'الخاص بي', 'الشهر الحالي', 'الاسبوع الماضي', 'السنوي'
+      'من بطاقتي', 'الخاص بي', 'الشهر الحالي', 'الاسبوع الماضي', 'السنوي', 'امس واليوم', 'الحرية المالية'
     ];
     
     const enActions = [
       'please', 'want', 'need', 'like', 'record', 'track', 'log', 'add', 'delete', 'remove', 
       'check', 'show', 'get', 'calculate', 'view', 'list', 'cancel', 'clear', 'wipe', 'update',
-      'modify', 'verify', 'screen', 'audit', 'inspect', 'analyze', 'evaluate', 'assess', 'distribute', 'allocate'
+      'modify', 'verify', 'screen', 'audit', 'inspect', 'analyze', 'evaluate', 'assess', 'distribute', 'allocate',
+      'compare', 'predict', 'forecast', 'pay off', 'convert', 'export', 'remind', 'alert', 'budget', 'manage', 'organize'
     ];
     const enObjects = [
       'transaction', 'purchase', 'expense', 'debit', 'payment', 'bill', 'stock', 'stocks', 'portfolio', 'shares', 
       'goal', 'savings', 'target', 'balance', 'cash', 'budget', 'subscription', 'membership', 'salary', 'earnings',
-      'dividend', 'netflix', 'spotify', 'starbucks', 'gym', 'card', 'funds', 'capital', 'allowance', 'reserve'
+      'dividend', 'netflix', 'spotify', 'starbucks', 'gym', 'card', 'funds', 'capital', 'allowance', 'reserve',
+      'compare', 'last month', 'debt', 'debts', 'loan', 'tax', 'zakat', 'calculator', 'currency', 'health',
+      'category', 'spending on', 'limit', 'recurring', 'export', 'report', 'worth', 'net', 'emergency', 'reminder', 'alert'
     ];
     const enModifiers = [
       '', 'today', 'yesterday', 'now', 'immediately', 'quickly', 'please', 'for me', 'in my wallet', 'from my card',
-      'my own', 'this month', 'last week', 'annually', 'right now'
+      'my own', 'this month', 'last week', 'annually', 'right now', 'yesterday and today', 'financial freedom'
     ];
 
     // Insert all Action + Object + Modifier combinations
     for (const action of arActions) {
       for (const obj of arObjects) {
         let intent = 'greeting';
-        if (obj.includes('معامله') || obj.includes('عمليه') || obj.includes('فاتوره') || obj.includes('مصروف') || obj.includes('شراء') || obj.includes('دفع') || obj.includes('ستاربكس')) {
+        if (obj.includes('مقارنة') || obj.includes('الشهر الماضي') || action.includes('قارن')) {
+          intent = 'compare_months';
+        } else if (obj.includes('توقع') || obj.includes('تنبا') || action.includes('توقع') || action.includes('تنبا')) {
+          intent = 'predict_spending';
+        } else if (obj.includes('دين') || obj.includes('ديون') || obj.includes('قرض') || action.includes('سدد')) {
+          intent = 'debt_advice';
+        } else if (obj.includes('ضريبة') || obj.includes('زكاة') || action.includes('احسب زكاة')) {
+          intent = 'tax_advice';
+        } else if (obj.includes('حاسبة') || obj.includes('قسط') || action.includes('قسط')) {
+          intent = 'loan_calculator';
+        } else if (obj.includes('تحويل') || obj.includes('عملة') || action.includes('حول')) {
+          intent = 'currency_convert';
+        } else if (obj.includes('صحة') || obj.includes('تقييم') || action.includes('تقييم')) {
+          intent = 'financial_health';
+        } else if (obj.includes('فئة') || obj.includes('تصنيف') || obj.includes('صرفيات')) {
+          intent = 'category_spending';
+        } else if (obj.includes('ميزانيه') || action.includes('خطط') || action.includes('ميزانية')) {
+          intent = 'set_budget';
+        } else if (obj.includes('دوري') || obj.includes('تكرار') || obj.includes('اشتراك')) {
+          intent = 'toggle_subscription';
+        } else if (obj.includes('تصدير') || obj.includes('تقرير') || action.includes('صدر')) {
+          intent = 'export_data';
+        } else if (obj.includes('ثروة') || obj.includes('صافي')) {
+          intent = 'net_worth';
+        } else if (obj.includes('طوارئ') || obj.includes('احتياطي')) {
+          intent = 'emergency_fund';
+        } else if (obj.includes('نمط') || obj.includes('اتجاه') || action.includes('تحليل')) {
+          intent = 'spending_trend';
+        } else if (obj.includes('تذكير') || obj.includes('تنبيه') || action.includes('ذكرني') || action.includes('نبهني')) {
+          intent = 'bill_reminder';
+        } else if (obj.includes('معامله') || obj.includes('عمليه') || obj.includes('فاتوره') || obj.includes('مصروف') || obj.includes('شراء') || obj.includes('دفع') || obj.includes('ستاربكس')) {
           intent = action.includes('حذف') || action.includes('مسح') || action.includes('الغاء') ? 'delete_transaction' : 'add_transaction';
-        } else if (obj.includes('رصيد') || obj.includes('فلوس') || obj.includes('حساب') || obj.includes('ميزانيه') || obj.includes('نقدية') || obj.includes('سيولة') || obj.includes('اموال')) {
+        } else if (obj.includes('رصيد') || obj.includes('فلوس') || obj.includes('حساب') || obj.includes('نقدية') || obj.includes('سيولة') || obj.includes('اموال')) {
           intent = 'check_balance';
         } else if (obj.includes('هدف') || obj.includes('ادخار') || obj.includes('توفير') || obj.includes('مدخرات')) {
           intent = 'create_goal';
         } else if (obj.includes('سهم') || obj.includes('اسهم') || obj.includes('تداول') || obj.includes('محفظه') || obj.includes('أرامكو') || obj.includes('الراجحي')) {
           intent = 'stock_check';
-        } else if (obj.includes('اشتراك') || obj.includes('عضويه') || obj.includes('نتفلكس') || obj.includes('جم')) {
-          intent = 'toggle_subscription';
         }
         
         for (const mod of arModifiers) {
@@ -748,16 +782,44 @@ class TfIdfClassifier {
     for (const action of enActions) {
       for (const obj of enObjects) {
         let intent = 'greeting';
-        if (obj.includes('transaction') || obj.includes('purchase') || obj.includes('expense') || obj.includes('debit') || obj.includes('payment') || obj.includes('bill') || obj.includes('starbucks')) {
-          intent = action.includes('delete') || action.includes('remove') || action.includes('clear') || action.includes('wipe') ? 'delete_transaction' : 'add_transaction';
-        } else if (obj.includes('balance') || obj.includes('cash') || obj.includes('budget') || obj.includes('funds') || obj.includes('capital') || obj.includes('allowance')) {
-          intent = 'check_balance';
-        } else if (obj.includes('goal') || obj.includes('savings') || obj.includes('target') || obj.includes('reserve')) {
-          intent = 'create_goal';
-        } else if (obj.includes('stock') || obj.includes('portfolio') || obj.includes('shares') || obj.includes('dividend') || obj.includes('earnings') || obj.includes('salary')) {
-          intent = 'stock_check';
-        } else if (obj.includes('subscription') || obj.includes('membership') || obj.includes('netflix') || obj.includes('spotify') || obj.includes('gym')) {
+        if (obj.includes('compare') || obj.includes('last month') || action.includes('compare')) {
+          intent = 'compare_months';
+        } else if (obj.includes('predict') || obj.includes('forecast') || action.includes('predict') || action.includes('forecast')) {
+          intent = 'predict_spending';
+        } else if (obj.includes('debt') || obj.includes('loan') || action.includes('pay off')) {
+          intent = 'debt_advice';
+        } else if (obj.includes('tax') || obj.includes('zakat')) {
+          intent = 'tax_advice';
+        } else if (obj.includes('calculator') || obj.includes('installment')) {
+          intent = 'loan_calculator';
+        } else if (obj.includes('convert') || obj.includes('currency') || action.includes('convert')) {
+          intent = 'currency_convert';
+        } else if (obj.includes('health') || obj.includes('evaluate') || action.includes('evaluate')) {
+          intent = 'financial_health';
+        } else if (obj.includes('category') || obj.includes('spending on')) {
+          intent = 'category_spending';
+        } else if (obj.includes('budget') || action.includes('budget')) {
+          intent = 'set_budget';
+        } else if (obj.includes('recurring') || obj.includes('subscription')) {
           intent = 'toggle_subscription';
+        } else if (obj.includes('export') || obj.includes('report') || action.includes('export')) {
+          intent = 'export_data';
+        } else if (obj.includes('worth') || obj.includes('net')) {
+          intent = 'net_worth';
+        } else if (obj.includes('emergency') || obj.includes('reserve')) {
+          intent = 'emergency_fund';
+        } else if (obj.includes('trend') || obj.includes('pattern') || action.includes('analyze')) {
+          intent = 'spending_trend';
+        } else if (obj.includes('reminder') || obj.includes('alert') || action.includes('remind') || action.includes('alert')) {
+          intent = 'bill_reminder';
+        } else if (obj.includes('transaction') || obj.includes('purchase') || obj.includes('expense') || obj.includes('debit') || obj.includes('payment') || obj.includes('bill') || obj.includes('starbucks')) {
+          intent = action.includes('delete') || action.includes('remove') || action.includes('clear') || action.includes('wipe') ? 'delete_transaction' : 'add_transaction';
+        } else if (obj.includes('balance') || obj.includes('cash') || obj.includes('funds') || obj.includes('capital') || obj.includes('allowance')) {
+          intent = 'check_balance';
+        } else if (obj.includes('goal') || obj.includes('savings') || obj.includes('target')) {
+          intent = 'create_goal';
+        } else if (obj.includes('stock') || obj.includes('portfolio') || obj.includes('shares')) {
+          intent = 'stock_check';
         }
 
         for (const mod of enModifiers) {
