@@ -1014,6 +1014,48 @@ app.post('/api/profile', async (req, res) => {
   }
 });
 
+app.get('/api/ai/knowledge', async (req, res) => {
+  const { query, lang } = req.query;
+  if (!query) {
+    return res.status(400).json({ error: 'Missing query parameter' });
+  }
+  try {
+    const isAr = lang === 'ar' || /[\u0600-\u06FF]/.test(query);
+    const cleanQuery = query.replace(/[\?\؟\,\،\;\؛\.\!\-]/g, ' ').replace(/[^a-zA-Z0-9\s\u0600-\u06FF]/g, ' ').trim();
+    const words = cleanQuery.split(/\s+/).filter(w => w.length >= 2).slice(0, 5);
+    
+    if (words.length === 0) {
+      return res.json({ match: false, result: null });
+    }
+
+    const langCode = isAr ? 'ar' : 'en';
+
+    // 1. Try precise AND search
+    const andMatch = words.join(" AND ");
+    let result = await database.get(
+      "SELECT question, answer, category, lang, keywords FROM financial_qa_fts WHERE lang = ? AND keywords MATCH ? LIMIT 1",
+      [langCode, andMatch]
+    );
+
+    // 2. Fallback to broad OR search
+    if (!result) {
+      const orMatch = words.join(" OR ");
+      result = await database.get(
+        "SELECT question, answer, category, lang, keywords FROM financial_qa_fts WHERE lang = ? AND keywords MATCH ? LIMIT 1",
+        [langCode, orMatch]
+      );
+    }
+
+    if (result) {
+      res.json({ match: true, result });
+    } else {
+      res.json({ match: false, result: null });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 /**
  * ROUTES - ADMIN CLEAN SLATE
  */
@@ -1030,65 +1072,8 @@ app.post('/api/admin/clean-slate', async (req, res) => {
     // Reset badges unlocked column (unlocked = 0, unlocked_at = NULL)
     await database.run('UPDATE badges SET unlocked = 0, unlocked_at = NULL');
 
-    // Clear bank_accounts but insert back default bank account templates
+    // Clear bank_accounts
     await database.run('DELETE FROM bank_accounts');
-    await database.run(`
-      INSERT INTO bank_accounts (bank_name, account_number, balance, linked_at) VALUES
-      ('Alinma Bank', 'SA10200000123456789012', 24500.00, '2026-06-01'),
-      ('SNB Bank', 'SA40100000987654321098', 8200.00, '2026-06-10'),
-      ('Al Rajhi Bank', 'SA80300000112233445566', 52430.00, '2026-05-15')
-    `);
-
-    // Re-seed default savings goals
-    await database.run(`
-      INSERT INTO savings_goals (title, target_amount, current_amount, target_date) VALUES
-      ('Wedding', 150000.00, 95000.00, '2027-06-01'),
-      ('Emergency Fund', 50000.00, 32000.00, '2026-12-31'),
-      ('New Car (Lucid Air)', 320000.00, 45000.00, '2028-12-31')
-    `);
-
-    // Re-seed default stocks portfolio
-    await database.run(`
-      INSERT INTO stocks (symbol, name, quantity, purchase_price, current_price) VALUES
-      ('1150', 'Alinma Bank', 500.0, 31.50, 34.20),
-      ('2222', 'Saudi Aramco', 800.0, 28.90, 30.45),
-      ('7010', 'STC', 300.0, 38.20, 39.10),
-      ('2010', 'SABIC', 150.0, 78.50, 81.30),
-      ('CONV', 'Conventional Mock Bank', 100.0, 45.00, 42.50)
-    `);
-
-    // Re-seed default credit and debit transactions
-    await database.run(`
-      INSERT INTO transactions (date, description, amount, category, type, is_recurring, is_anomaly) VALUES
-      ('2026-04-27', 'Salary Payout Alinma', 18000.00, 'Salary', 'credit', 1, 0),
-      ('2026-05-27', 'Salary Payout Alinma', 18000.00, 'Salary', 'credit', 1, 0),
-      ('2026-06-27', 'Salary Payout Alinma', 18000.00, 'Salary', 'credit', 1, 0),
-      ('2026-05-02', 'Spotify subscription', -23.00, 'Entertainment', 'debit', 1, 0),
-      ('2026-06-02', 'Spotify subscription', -23.00, 'Entertainment', 'debit', 1, 0),
-      ('2026-05-05', 'Tuwaiq Fitness Gym', -350.00, 'Health & Fitness', 'debit', 1, 0),
-      ('2026-06-05', 'Tuwaiq Fitness Gym', -350.00, 'Health & Fitness', 'debit', 1, 0),
-      ('2026-05-10', 'Netflix subscription', -56.00, 'Entertainment', 'debit', 1, 0),
-      ('2026-06-10', 'Netflix subscription', -56.00, 'Entertainment', 'debit', 1, 0),
-      ('2026-06-01', 'Starbucks Coffee', -24.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-04', 'Starbucks Coffee', -28.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-08', 'Starbucks Coffee', -24.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-12', 'Starbucks Coffee', -24.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-16', 'Starbucks Coffee', -28.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-20', 'Starbucks Coffee', -24.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-02', 'STC Fiber Internet', -287.50, 'Utilities', 'debit', 1, 0),
-      ('2026-06-18', 'Saudi Electric Company Bill', -520.00, 'Utilities', 'debit', 1, 0),
-      ('2026-06-03', 'Uber ride', -45.00, 'Transportation', 'debit', 0, 0),
-      ('2026-06-07', 'Uber ride', -35.00, 'Transportation', 'debit', 0, 0),
-      ('2026-06-11', 'Uber ride', -40.00, 'Transportation', 'debit', 0, 0),
-      ('2026-06-14', 'Aldrees Gas Station', -65.00, 'Transportation', 'debit', 0, 0),
-      ('2026-06-05', 'Albaik Restaurant', -34.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-10', 'McDonalds Dining', -42.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-22', 'Maestro Pizza', -58.00, 'Food & Dining', 'debit', 0, 0),
-      ('2026-06-06', 'Amazon.sa Online Order', -120.00, 'Shopping', 'debit', 0, 0),
-      ('2026-06-12', 'Noon.com Purchase', -85.00, 'Shopping', 'debit', 0, 0),
-      ('2026-06-15', 'Jarir Bookstore Electronic Device', -6500.00, 'Shopping', 'debit', 0, 1),
-      ('2026-06-20', 'Luxury Watches Al-Batha', -12000.00, 'Shopping', 'debit', 0, 1)
-    `);
 
     res.json({ success: true });
   } catch (err) {
